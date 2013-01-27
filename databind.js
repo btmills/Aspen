@@ -59,6 +59,36 @@ define(['jquery', 'underscore', 'oo', 'property', 'events'], function ($, _, Cla
 		}
 	});
 
+	var TextEndpoint = Endpoint.extend({
+		init: function (el) {
+			this._super(el);
+		},
+		get: function () {
+			return this.el.text();
+		},
+		set: function (value) {
+			var oldValue = this.el.text();
+			if (oldValue == value) return;
+
+			this.el.text(value);
+		}
+	});
+
+	var TitleEndpoint = Endpoint.extend({
+		init: function (el) {
+			this._super(el);
+		},
+		get: function () {
+			return this.el.attr('title');
+		},
+		set: function (value) {
+			var oldValue = this.el.attr('title');
+			if (oldValue == value) return;
+
+			this.el.attr('title', value);
+		}
+	});
+
 	var ValEndpoint = Endpoint.extend({
 		init: function (el) {
 			this._super(el);
@@ -76,21 +106,6 @@ define(['jquery', 'underscore', 'oo', 'property', 'events'], function ($, _, Cla
 			if (oldValue == value) return;
 
 			this.el.val(value);
-		}
-	});
-
-	var TextEndpoint = Endpoint.extend({
-		init: function (el) {
-			this._super(el);
-		},
-		get: function () {
-			return this.el.text();
-		},
-		set: function (value) {
-			var oldValue = this.el.text();
-			if (oldValue == value) return;
-
-			this.el.text(value);
 		}
 	});
 
@@ -115,6 +130,10 @@ define(['jquery', 'underscore', 'oo', 'property', 'events'], function ($, _, Cla
 
 			case 'text':
 				bindings.push(new this(model.properties[binding[key]], new TextEndpoint(el)));
+				break;
+
+			case 'title':
+				bindings.push(new this(model.properties[binding[key]], new TitleEndpoint(el)));
 				break;
 
 			case 'val':
