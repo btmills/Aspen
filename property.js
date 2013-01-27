@@ -5,7 +5,9 @@ define(['events'], function (EventEmitter) {
 		init: function (name, opts) {
 			this._super();
 
-			this._value = opts.hasOwnProperty('default') ? opts.default : null;
+			this._value = null;
+			this._fn = opts.fn || function (x) { return x; };
+			this.set(opts.hasOwnProperty('default') ? opts.default : null);
 		},
 
 		get: function () {
@@ -14,7 +16,7 @@ define(['events'], function (EventEmitter) {
 
 		set: function (newValue) {
 			var oldValue = this._value;
-			this._value = newValue;
+			this._value = this._fn(newValue);
 			this.emit('change', { oldValue: oldValue, newValue: this._value });
 		}
 
