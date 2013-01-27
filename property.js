@@ -2,7 +2,7 @@ define(['events'], function (EventEmitter) {
 
 	var Property = EventEmitter.extend({
 
-		init: function (name, opts) {
+		init: function (opts) {
 			this._super();
 
 			this._value = null;

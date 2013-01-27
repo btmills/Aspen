@@ -10,7 +10,7 @@ define(['jquery', 'underscore', 'events', 'property'], function ($, Underscore, 
 			for (prop in opts.schema) {
 				if (!opts.schema.hasOwnProperty(prop)) continue;
 
-				this.properties[prop] = new Property(prop, opts.schema[prop]);
+				this.properties[prop] = new Property(opts.schema[prop]);
 			}
 
 			this.set(vals);
