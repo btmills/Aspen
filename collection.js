@@ -1,50 +1,49 @@
 define(['underscore', 'events', 'model'], function (_, EventEmitter, Model) {
 
-	var Collection = (function () {
+	var Collection = EventEmitter.extend({
+		init: function (opts, contents) {
+			this._super();
 
-		var define = function (opts) {
+			this.length = 0;
+			this._arr = [];
+			this._ids = {};
 
-			function Collection(contents) {
+			var self = this;
+			_.each(contents, function(element) {
+				self.add(element);
+			});
+		},
 
-				_.extend(this, new EventEmitter()); // Inherit from EventEmitter. This is probably the wrong way to do this.
+		add: function (element) {
+			if (this._ids.hasOwnProperty(element.id)) return;
 
-				this.length = 0;
-				this.arr = [];
-				this.ids = {};
-			}
+			this._ids[element.id] = element;
+			this._arr.push(element);
+			this.length++;
 
-			Collection.prototype.add = function (element) {
-				if (this.ids.hasOwnProperty(element.id)) return;
+			this.emit('add change', { length: this.length, element: element });
 
-				this.ids[element.id] = element;
-				this.arr.push(element);
-				this.length++;
+			return this; // Chaining
+		},
 
-				this.emit('change add', { length: this.length, element: element });
+		remove: function (element) {
+			// Element can be either an id or an element
+			var id = (element instanceof Model ? element.id : element);
 
-				return this;
-			};
+			if (!this._ids.hasOwnProperty(id)) return;
 
-			Collection.prototype.remove = function (element) {
-				if (!this.ids.hasOwnProperty(element.id)) return;
+			var removed = this._ids[id];
 
-				delete this.ids[element.id];
-				this.arr.splice(this.arr.indexOf(element), 1);
-				this.length--;
+			this._arr.splice(this._arr.indexof(removed), 1);
+			delete this._ids[id];
+			this.length--;
 
-				this.emit('change remove', { length: this.length, element: element });
+			this.emit('remove change', { length: this.length, element: removed });
 
-				return this;
-			};
-
-			return Collection;
+			return this; // Chaining
 		}
 
-		return {
-			define: define
-		};
-
-	})();
+	});
 
 	return Collection;
 });
