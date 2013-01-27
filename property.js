@@ -5,7 +5,7 @@ define(['events'], function (EventEmitter) {
 		init: function (name, opts) {
 			this._super();
 
-			this._value = opts.default || null;
+			this._value = opts.hasOwnProperty('default') ? opts.default : null;
 		},
 
 		get: function () {
