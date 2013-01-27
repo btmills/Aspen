@@ -1,4 +1,4 @@
-define(['jquery', 'underscore', 'property', 'events'], function ($, _, Property, EventEmitter) {
+define(['jquery', 'underscore', 'oo', 'property', 'events'], function ($, _, Class, Property, EventEmitter) {
 
 	var Binding = function (src, tgt, opts) {
 
@@ -35,9 +35,31 @@ define(['jquery', 'underscore', 'property', 'events'], function ($, _, Property,
 
 	};
 
-	function Endpoint() {}
+	var Endpoint = EventEmitter.extend({
+		init: function (el) {
+			this._super();
 
-	function ClassEndpoint(el, classname) {
+			if (!el instanceof $)
+				throw 'Endpoint element must be a jQuery object.';
+			this.el = el;
+		}
+	});
+
+	var ClassEndpoint = Endpoint.extend({
+		init: function (el, classname) {
+			this._super(el);
+			this.classname = classname;
+		},
+		get: function () {
+			return this.el.hasClass(this.classname);
+		},
+		set: function (value) {
+			if (value) this.el.addClass(this.classname);
+			else this.el.removeClass(this.classname);
+		}
+	});
+
+	/*function ClassEndpoint(el, classname) {
 
 		if (!el instanceof $)
 			throw 'ClassEndpoint element must be a jQuery object.';
@@ -58,9 +80,29 @@ define(['jquery', 'underscore', 'property', 'events'], function ($, _, Property,
 		}
 
 	}
-	ClassEndpoint.prototype = new Endpoint();
+	ClassEndpoint.prototype = new Endpoint();*/
 
-	function ValEndpoint(el) {
+	var ValEndpoint = Endpoint.extend({
+		init: function (el) {
+			this._super(el);
+
+			var self = this;
+			this.el.on('change keyup blur', function () {
+				self.emit('change keyup blur', {});
+			});
+		},
+		get: function () {
+			return this.el.val();
+		},
+		set: function (value) {
+			var oldValue = this.el.val();
+			if (oldValue == value) return;
+
+			this.el.val(value);
+		}
+	});
+
+	/*function ValEndpoint(el) {
 
 		if (!el instanceof $)
 			throw 'TextEndpoint element must be a jQuery object.';
@@ -87,9 +129,24 @@ define(['jquery', 'underscore', 'property', 'events'], function ($, _, Property,
 		}
 
 	}
-	ValEndpoint.prototype = new Endpoint();
+	ValEndpoint.prototype = new Endpoint();*/
 
-	function TextEndpoint(el) {
+	var TextEndpoint = Endpoint.extend({
+		init: function (el) {
+			this._super(el);
+		},
+		get: function () {
+			return this.el.text();
+		},
+		set: function (value) {
+			var oldValue = this.el.text();
+			if (oldValue == value) return;
+
+			this.el.text(value);
+		}
+	});
+
+	/*function TextEndpoint(el) {
 
 		if (!el instanceof $)
 			throw 'TextEndpoint element must be a jQuery object.';
@@ -112,7 +169,7 @@ define(['jquery', 'underscore', 'property', 'events'], function ($, _, Property,
 		}
 
 	}
-	TextEndpoint.prototype = new Endpoint();
+	TextEndpoint.prototype = new Endpoint();*/
 
 	Binding.parse = function (model, el) {
 		//console.log('Parsing binding expression of %o with %o as context.', el, model);

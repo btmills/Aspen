@@ -1,6 +1,6 @@
 define(['underscore', 'oo'], function (_, Class) {
 
-	var EventEmitter = function () {
+	/*var EventEmitter = function () {
 
 		var callbacks = {};
 
@@ -33,39 +33,42 @@ define(['underscore', 'oo'], function (_, Class) {
 			}
 		};
 
-	};
+	};*/
 
-	/*var EventEmitter = Class.extend({
+	var EventEmitter = Class.extend({
 		init: function () {
 			this._callbacks = {};
 		},
-		_emit: function (events, args) {
+		emit: function (events, args) {
+			var self = this;
 			_.each(events.split(' '), function (event) {
-				_.each(this._callbacks[event], function(callback) {
+				_.each(self._callbacks[event], function(callback) {
 					if (callback) callback(event, args);
 				});
 			});
 		},
 		on: function (events, callback) {
+			var self = this;
 			_.each(events.split(' '), function (event) {
-				if (!this._callbacks.hasOwnProperty(event))
-					this._callbacks[event] = [];
+				if (!self._callbacks.hasOwnProperty(event))
+					self._callbacks[event] = [];
 
-				this._callbacks[event].push(callback);
+				self._callbacks[event].push(callback);
 			});
 		},
 		off: function (events, callback) {
+			var self = this;
 			_.each(events.split(' '), function (event) {
-				if (!this._callbacks.hasOwnProperty(event)) return;
+				if (!self._callbacks.hasOwnProperty(event)) return;
 
-				var index = this._callbacks[event].indexOf(callback);
+				var index = self._callbacks[event].indexOf(callback);
 
 				if (index < 0) return;
 
-				this._callbacks[event].splice(index, 1);
+				self._callbacks[event].splice(index, 1);
 			});
 		}
-	});*/
+	});
 
 	return EventEmitter;
 

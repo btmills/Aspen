@@ -1,6 +1,6 @@
 define(['events'], function (EventEmitter) {
 
-	var Property = function (name, opts) {
+	/*var Property = function (name, opts) {
 
 		_.extend(this, new EventEmitter()); // Inherit from EventEmitter. This is probably the wrong way to do this.
 		var _emit = this._emit;
@@ -14,19 +14,28 @@ define(['events'], function (EventEmitter) {
 		function set(newValue) {
 			var oldValue = value;
 			value = newValue;
-			//console.log('Property "%s" set: %o -> %o', name, oldValue, value);
 			_emit('change', { oldValue: oldValue, newValue: value });
 		}
 
-		/*return {
-			get: get,
-			off: this.off,
-			on: this.on,
-			set: set
-		}*/
 		this.get = get;
 		this.set = set;
-	}
+	}*/
+
+	var Property = EventEmitter.extend({
+		init: function (name, opts) {
+			this._super();
+
+			this._value = opts.default || null;
+		},
+		get: function () {
+			return this._value;
+		},
+		set: function (newValue) {
+			var oldValue = this._value;
+			this._value = newValue;
+			this.emit('change', { oldValue: oldValue, newValue: this._value });
+		}
+	});
 
 	return Property;
 
